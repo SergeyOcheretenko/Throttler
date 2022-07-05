@@ -1,0 +1,19 @@
+{
+  "name": "throttler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SergeyOcheretenko/Throttler.git"
+  },
+  "author": "Sergey Ocheretenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SergeyOcheretenko/Throttler/issues"
+  },
+  "homepage": "https://github.com/SergeyOcheretenko/Throttler#readme"
+}
