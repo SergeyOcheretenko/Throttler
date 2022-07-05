@@ -5,19 +5,31 @@ class Throttler {
         this.ms = ms;
         this.requests = requests;
         this.stack = 0;
-        setInterval(() => {
+        this.startTracking = Date.now();
+        // setInterval(() => {
+        //     this.stack = 0;
+        // }, ms);
+    }
+
+    checkTime() {
+        if (Date.now() - this.startTracking >= this.ms) {
             this.stack = 0;
-        }, ms);
+            this.startTracking = Date.now();
+        }
+        return;
     }
 
     async acquire() {
         return new Promise((resolve, reject) => {
             const waitForCondition = () => {
+                this.checkTime();
                 if (this.stack < this.requests) {
                     this.stack++;
                     return resolve();
                 }
-                setTimeout(waitForCondition, 30);
+                setTimeout(() => {
+                    waitForCondition();
+                }, 30);
             };
             return waitForCondition();
         });
