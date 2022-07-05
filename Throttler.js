@@ -12,12 +12,10 @@ class Throttler {
 
     async acquire() {
         return new Promise((resolve, reject) => {
-            const waitForCondition = () => {
+            return (function waitForCondition() {
                 if (this.stack === 0) return resolve();
-                setTimeout(waitForCondition, 30);
-            }
-
-            waitForCondition();
+                setTimeout(waitForCondition.bind(this), 30);
+            }).call(this);
         });
     }
 }
