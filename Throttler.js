@@ -18,15 +18,14 @@ class Throttler {
 
     async acquire() {
         return new Promise((resolve) => {
-            const waitForCondition = () => {
+            (function waitForCondition() {
                 this.checkTime();
                 if (this.stack < this.requests) {
                     this.stack++;
                     return resolve();
                 }
-                setTimeout(waitForCondition, 30);
-            };
-            return waitForCondition();
+                setTimeout(waitForCondition.bind(this), 30);
+            }).call(this);
         });
     }
 }
