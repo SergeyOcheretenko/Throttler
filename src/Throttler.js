@@ -1,9 +1,9 @@
 'use strict';
 
 class Throttler {
-    constructor(config) {
-        this.ms = config.ms;
-        this.requests = config.requests;
+    constructor({ ms, requests }) {
+        this.ms = ms;
+        this.requests = requests;
         this.stack = 0;
         this.startTracking = Date.now();
     }
