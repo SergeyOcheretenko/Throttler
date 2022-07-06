@@ -2,20 +2,17 @@
 
 const Throttler = require('./Throttler');
 
-const throttler = new Throttler({ ms: 3000, requests: 7 });
+const throttler = new Throttler({ ms: 100, requests: 8 });
 
-function request(...args) {
-    console.log(args.join(' '));
-}
-
-async function throttledRequest(...args) {
-    await throttler.acquire();
-    return request(...args);
+async function throttledRequest(number) {
+    await throttler.acquire(number);
+    console.log(`${number} done`);
+    return;
 }
 
 async function test() {
-    for (let i = 1; i <= 15; i++) {
-        await throttledRequest(`${i} started`);
+    for (let i = 1; i <= 14; i++) {
+        setTimeout(() => throttledRequest(i), 10 * i);
     }
 }
 
