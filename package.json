@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/SergeyOcheretenko/Throttler/issues"
   },
-  "homepage": "https://github.com/SergeyOcheretenko/Throttler#readme"
+  "homepage": "https://github.com/SergeyOcheretenko/Throttler#readme",
+  "devDependencies": {
+    "jest": "^28.1.2"
+  }
 }
