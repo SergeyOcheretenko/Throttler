@@ -1,15 +1,15 @@
 'use strict';
 
-const Throttler = require('./Throttler');
+const throttler = require('./Throttler');
 
-const throttler = new Throttler({ ms: 3000, requests: 7 });
+const mythrottler = new throttler({ ms: 3000, requests: 7 });
 
 function request(...args) {
     console.log(args.join(' '));
 }
 
 async function throttledRequest(...args) {
-    await throttler.acquire();
+    await mythrottler.acquire();
     return request(...args);
 }
 

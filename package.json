@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/SergeyOcheretenko/Throttler/issues"
   },
-  "homepage": "https://github.com/SergeyOcheretenko/Throttler#readme"
+  "homepage": "https://github.com/SergeyOcheretenko/Throttler#readme",
+  "devDependencies": {
+    "@types/node": "^18.0.1"
+  }
 }
