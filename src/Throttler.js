@@ -17,21 +17,14 @@ class Throttler {
         return;
     }
 
-    generateId() {
-        const len = this.promiseStack.length;
-        if (len === 0) return 1;
-        return this.promiseStack[len - 1] + 1;
-    }
-
     async acquire() {
         return new Promise((resolve) => {
-            const promiseId = this.generateId();
-            this.promiseStack.push(promiseId);
+            this.promiseStack.push(resolve);
             (function waitForCondition() {
                 this.checkTime();
-                if (this.stackRequests < this.maxRequests && promiseId === this.promiseStack[0]) {
+                if (this.stackRequests < this.maxRequests) {
                     this.stackRequests++;
-                    this.promiseStack.shift();
+                    this.promiseStack.shift()();
                     return resolve();
                 }
                 setTimeout(waitForCondition.bind(this), 30);
