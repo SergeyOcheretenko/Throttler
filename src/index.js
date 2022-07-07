@@ -2,7 +2,7 @@
 
 const Throttler = require('./Throttler');
 
-const throttler = new Throttler({ ms: 100, requests: 8 });
+const throttler = new Throttler({ ms: 10, requests: 1 });
 
 function request(...args) {
     return args;

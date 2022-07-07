@@ -5,14 +5,25 @@ class Throttler {
         this.ms = ms;
         this.maxRequests = requests;
         this.stackRequests = 0;
-        this.startTracking = Date.now();
         this.promiseStack = [];
+
+        setInterval(() => {
+            this.stackRequests = 0;
+            let resolvedPromises = 0;
+            for (const resolve of this.promiseStack) {
+                resolve();
+                if (resolvedPromises === this.maxRequests) break;
+            }
+            this.stackRequests += resolvedPromises;
+            return;
+        }, ms);
     }
 
-    checkTime() {
-        if (Date.now() - this.startTracking >= this.ms) {
-            this.stackRequests = 0;
-            this.startTracking = Date.now();
+    tryToResolveImmediately() {
+        if (this.stackRequests < this.maxRequests) {
+            const resolve = this.promiseStack.shift();
+            resolve();
+            this.stackRequests++;
         }
         return;
     }
@@ -20,15 +31,7 @@ class Throttler {
     async acquire() {
         return new Promise((resolve) => {
             this.promiseStack.push(resolve);
-            (function waitForCondition() {
-                this.checkTime();
-                if (this.stackRequests < this.maxRequests) {
-                    this.stackRequests++;
-                    this.promiseStack.shift()();
-                    return resolve();
-                }
-                setTimeout(waitForCondition.bind(this), 30);
-            }).call(this);
+            this.tryToResolveImmediately();
         });
     }
 }
