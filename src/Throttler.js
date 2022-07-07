@@ -12,14 +12,20 @@ class Throttler {
     startCleaner() {
         if (!this.cleanerStarted) {
             this.cleanerStarted = true;
-            return setInterval(() => {
+            this.cleanerId = setInterval(() => {
                 this.stackRequests = 0;
-                let resolvedPromises = 0;
                 for (const resolve of this.promiseStack) {
                     resolve();
-                    if (resolvedPromises === this.maxRequests) break;
+                    this.stackRequests++;
+                    if (this.stackRequests === this.maxRequests) {
+                        break;
+                    }
                 }
-                this.stackRequests += resolvedPromises;
+                this.promiseStack = this.promiseStack.slice(this.stackRequests);
+                if (this.stackRequests === 0) {
+                    this.cleanerStarted = false;
+                    return clearInterval(this.cleanerId);
+                }
                 return;
             }, this.ms);
         }
@@ -36,9 +42,9 @@ class Throttler {
     }
 
     async acquire() {
-        this.startCleaner();
         return new Promise((resolve) => {
             this.promiseStack.push(resolve);
+            this.startCleaner();
             this.tryToResolveImmediately();
         });
     }
