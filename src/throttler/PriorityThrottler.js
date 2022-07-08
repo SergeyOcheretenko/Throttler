@@ -1,13 +1,14 @@
 'use strict';
 
+const ResolveController = require('../ResolveController');
+
 class PriorityThrottler {
     constructor({ ms, requests }) {
+        this.resolveController = new ResolveController();
         this.configValidation(ms, requests);
         this.ms = ms;
         this.maxRequests = requests;
         this.completedRequests = 0;
-        this.stack = [];
-        this.priorityStack = [];
         this.cleanerStarted = false;
     }
 
@@ -18,25 +19,17 @@ class PriorityThrottler {
         if (request <= 0) {
             throw new Error('Unable to set a limit of 0 requests or less');
         }
-        return;
     }
 
-    cleanPriorityPromises() {
-        while (this.completedRequests < this.maxRequests && this.priorityStack.length > 0) {
-            const resolve = this.priorityStack.shift();
-            resolve();
-            this.completedRequests++;
+    tryToResolve() {
+        if (this.completedRequests >= this.maxRequests) {
+            return;
         }
-        return;
-    }
-
-    cleanUsualPromises() {
-        while (this.completedRequests < this.maxRequests && this.stack.length > 0) {
-            const resolve = this.stack.shift();
-            resolve();
+        const resolve = this.resolveController.getResolve();
+        if (resolve) {
             this.completedRequests++;
+            return resolve();
         }
-        return;
     }
 
     stopCleaner() {
@@ -50,37 +43,21 @@ class PriorityThrottler {
         }
         this.cleanerId = setInterval(() => {
             this.completedRequests = 0;
-            this.cleanPriorityPromises();
-            this.cleanUsualPromises();
+            while (this.completedRequests < this.maxRequests && this.resolveController.getActivePriority()) {
+                this.tryToResolve();
+            }
             if (this.completedRequests === 0) {
                 this.stopCleaner();
             }
         }, this.ms);
         this.cleanerStarted = true;
-        return;
     }
 
-    tryToResolveImmediately() {
-        if (this.completedRequests >= this.maxRequests) {
-            return;
-        }
-        const resolve = this.priorityStack.length > 0 
-            ? this.priorityStack.shift()
-            : this.stack.shift();
-        resolve();
-        this.completedRequests++;
-        return;
-    }
-
-    async acquire({ priority = false }) {
+    async acquire(priority) {
         return new Promise((resolve) => {
-            if (priority) {
-                this.priorityStack.push(resolve);
-            } else {
-                this.stack.push(resolve);
-            }
+            this.resolveController.saveResolve(resolve, priority);
             this.startCleaner();
-            this.tryToResolveImmediately();
+            this.tryToResolve();
         });
     }
 }

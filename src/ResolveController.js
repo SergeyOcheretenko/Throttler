@@ -5,7 +5,7 @@ class ResolveController {
         this.collection = {};
     }
 
-    getMaxPriority() {
+    getActivePriority() {
         const collectionKeys = Object.keys(this.collection).map(Number);
         if (collectionKeys.length === 0) {
             return;
@@ -21,7 +21,7 @@ class ResolveController {
     }
 
     getResolve() {
-        const maxPriority = this.getMaxPriority();
+        const maxPriority = this.getActivePriority();
         if (!maxPriority) {
             return;
         }
