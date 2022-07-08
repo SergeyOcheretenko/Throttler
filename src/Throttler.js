@@ -2,11 +2,22 @@
 
 class Throttler {
     constructor({ ms, requests }) {
+        this.configValidation(ms, requests);
         this.ms = ms;
         this.maxRequests = requests;
         this.stackRequests = 0;
         this.promiseStack = [];
         this.cleanerStarted = false;
+    }
+
+    configValidation(ms, request) {
+        if (ms < 0) {
+            throw new Error('Unable to set the time less than 0ms');
+        }
+        if (request <= 0) {
+            throw new Error('Unable to set a limit of 0 requests or less');
+        }
+        return;
     }
 
     startCleaner() {
