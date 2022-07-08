@@ -7,6 +7,9 @@ class ResolveController {
 
     getMaxPriority() {
         const collectionKeys = Object.keys(this.collection).map(Number);
+        if (collectionKeys.length === 0) {
+            return;
+        }
         return Math.max.apply(null, collectionKeys);
     }
 
@@ -19,6 +22,9 @@ class ResolveController {
 
     getResolve() {
         const maxPriority = this.getMaxPriority();
+        if (!maxPriority) {
+            return;
+        }
         const resolve = this.collection[maxPriority].shift();
         if (this.collection[maxPriority].length === 0) {
             delete this.collection[maxPriority];
@@ -26,3 +32,5 @@ class ResolveController {
         return resolve;
     }
 }
+
+module.exports = ResolveController;
