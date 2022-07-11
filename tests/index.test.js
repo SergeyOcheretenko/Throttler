@@ -1,6 +1,6 @@
 'use strict';
 
-const Throttler = require('../src/Throttler');
+const Throttler = require('../src/throttler/Throttler');
 
 jest.setTimeout(60_000);
 
