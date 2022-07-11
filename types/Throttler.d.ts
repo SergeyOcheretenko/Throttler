@@ -5,11 +5,14 @@ interface IThrottlerConfig {
 
 export class Throttler {
     ms: number;
-    requests: number;
-    stack: number;
-    startTracking: Date;
+    maxRequests: number;
+    stackRequests: number;
+    promiseStack: Function[];
+    cleanerStarted: boolean;
 
     constructor(config: IThrottlerConfig);
-    checkTime(): void
+    configValidation(ms: number, requests: number): void;
+    startCleaner(): void;
+    tryToResolveImmediately(): void;
     acquire(): Promise<void>;
 }

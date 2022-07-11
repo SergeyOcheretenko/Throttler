@@ -30,9 +30,7 @@ async function generateRequests(throttler) {
     return result;
 }
 
-async function main() {
+(async (throttler) => {
     const data = await generateRequests(throttler);
     console.log(data);
-}
-
-main(throttler);
+})(throttler);
