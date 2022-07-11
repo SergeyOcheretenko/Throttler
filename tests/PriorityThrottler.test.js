@@ -1,5 +1,6 @@
 'use strict';
 
+const { performance } = require('perf_hooks');
 const PriorityThrottler = require('../src/throttler/PriorityThrottler');
 
 jest.setTimeout(60_000);
