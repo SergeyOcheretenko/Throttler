@@ -1,3 +1,4 @@
-declare function request(...args: any[]): void;
-declare function throttledRequest(...args: any[]): void;
-declare function test(): void;
+import { PriorityThrottler } from './PriorityThrottler';
+import { Throttler } from './Throttler';
+
+declare function generateRequests(throttler: PriorityThrottler | Throttler): any[];

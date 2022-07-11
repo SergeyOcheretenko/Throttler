@@ -11,7 +11,7 @@ export class Throttler {
     cleanerStarted: boolean;
 
     constructor(config: IThrottlerConfig);
-    configValidation(): void;
+    configValidation(ms: number, requests: number): void;
     startCleaner(): void;
     tryToResolveImmediately(): void;
     acquire(): Promise<void>;
