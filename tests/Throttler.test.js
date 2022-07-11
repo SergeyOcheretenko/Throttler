@@ -39,7 +39,7 @@ describe('Throttler FIFO', () => {
 
     test('1000 requests, 1 per 10ms', async () => {
         const throttler = new Throttler({ ms: 10, requests: 1 });
-        await checkFIFO(1000, throttler);
+        await checkFIFO(100, throttler);
     });
 
     test('10 requests, 9 per 10ms', async () => {
@@ -50,6 +50,11 @@ describe('Throttler FIFO', () => {
     test('100 requests, 1 per 0ms', async () => {
         const throttler = new Throttler({ ms: 0, requests: 1 });
         await checkFIFO(100, throttler);
+    });
+
+    test('100 requests, 1 per 1ms', async () => {
+        const throttler = new Throttler({ ms: 1, requests: 1 });
+        await checkFIFO(1000, throttler);
     });
 });
 
@@ -90,35 +95,42 @@ describe('Throttler corner cases', () => {
 describe('Throttler timing', () => {
     test('90 requests, 100 per 200ms', async () => {
         const throttler = new Throttler({ ms: 200, requests: 100 });
-        const workingTime = await checkTime(90, throttler);
+        const workingTime = await checkTime(50, throttler);
         expect(workingTime).toBeLessThan(200);
     });
 
     test('1000 requests, 1 per 10ms', async () => {
         const throttler = new Throttler({ ms: 10, requests: 1 });
         const workingTime = await checkTime(50, throttler);
-        expect(workingTime).toBeGreaterThanOrEqual(490);
-        expect(workingTime).toBeLessThan(510);
+        expect(workingTime).toBeGreaterThanOrEqual(489);
+        expect(workingTime).toBeLessThan(530);
     });
 
     test('11 requests, 10 per 100ms', async () => {
         const throttler = new Throttler({ ms: 100, requests: 10 });
         const workingTime = await checkTime(11, throttler);
-        expect(workingTime).toBeGreaterThanOrEqual(100);
-        expect(workingTime).toBeLessThan(120);
+        expect(workingTime).toBeGreaterThanOrEqual(99);
+        expect(workingTime).toBeLessThan(130);
     });
 
     test('5 requests, 1 per 100ms', async () => {
         const throttler = new Throttler({ ms: 100, requests: 1 });
         const workingTime = await checkTime(5, throttler);
-        expect(workingTime).toBeGreaterThanOrEqual(400);
-        expect(workingTime).toBeLessThan(420);
+        expect(workingTime).toBeGreaterThanOrEqual(399);
+        expect(workingTime).toBeLessThan(430);
     });
 
     test('31 requests, 10 per 50ms', async () => {
         const throttler = new Throttler({ ms: 50, requests: 10 });
         const workingTime = await checkTime(31, throttler);
-        expect(workingTime).toBeGreaterThanOrEqual(150);
-        expect(workingTime).toBeLessThan(170);
+        expect(workingTime).toBeGreaterThanOrEqual(149);
+        expect(workingTime).toBeLessThan(200);
+    });
+
+    test('100 requests, 1 per 2ms', async () => {
+        const throttler = new Throttler({ ms: 2, requests: 1 });
+        const workingTime = await checkTime(100, throttler);
+        expect(workingTime).toBeGreaterThanOrEqual(197);
+        expect(workingTime).toBeLessThan(250);
     });
 });
